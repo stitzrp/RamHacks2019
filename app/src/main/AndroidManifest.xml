@@ -4,7 +4,10 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <uses-feature android:name="android.hardware.camera.any" />
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-feature android:name="android.hardware.camera.full" />
+
 
     <application
         android:allowBackup="true"
@@ -16,6 +19,7 @@
         <activity android:name=".CameraActivity"></activity>
         <activity
             android:name=".getSaleable"
+            android:theme="@style/AppTheme"></activity>
             android:label="@string/title_activity_get_saleable"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".MainActivity">

@@ -19,10 +19,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String stockNum=""; //the stock number
+        String stockNum="17922851"; //the stock number
 
         //TODO uncomment the line below once the stocknumber is found from the QR code
-        //checkSalable(stockNum);
+        checkSalable(stockNum);
     }
 
 
