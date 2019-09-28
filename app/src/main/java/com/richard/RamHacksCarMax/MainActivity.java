@@ -3,8 +3,6 @@ package com.richard.RamHacksCarMax;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.view.View;
 
@@ -12,8 +10,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.*;
-import android.os.Bundle;
-import android.view.View;
+
 
 
 public class MainActivity extends AppCompatActivity {
