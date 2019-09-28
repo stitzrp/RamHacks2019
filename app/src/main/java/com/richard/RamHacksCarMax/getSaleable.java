@@ -1,11 +1,16 @@
 package com.richard.RamHacksCarMax;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 
 public class getSaleable extends AppCompatActivity {
@@ -19,18 +24,29 @@ public class getSaleable extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_saleable);
 
-
         //Javier Moreira
-        //
         String stock_num=""; //Unique Stock number of car
         // unpack stocknumber  from main activity:
-        Bundle foodBundle = getIntent().getBundleExtra("bundle");
-        stock_num =  foodBundle.getString("num");
-        //
+        Bundle stockBundle = getIntent().getBundleExtra("bundle");
+        stock_num =  stockBundle.getString("num");
         //end JAvier
 
-
         getCarInfo(stock_num);
+
+        TextView saleable_text = findViewById(R.id.saleableTextView);
+        TextView price_text = findViewById(R.id.priceTextView);
+        TextView mileage_text = findViewById(R.id.mileageTextView);
+
+        if(!saleable){
+            price_text.setVisibility(View.INVISIBLE);
+            mileage_text.setVisibility(View.INVISIBLE);
+            saleable_text.setText("Not Saleable");
+        }
+        else{
+            saleable_text.setText("Saleable!");
+            price_text.setText(price);
+            mileage_text.setText(mileage);
+        }
 
     }
 
@@ -59,6 +75,9 @@ public class getSaleable extends AppCompatActivity {
             //if everything finishes, the web page exists, and car is saleable
             saleable = true;
 
+            /*
+             Commented out, not returning for intent
+
             //create package to return result
             Intent intent = new Intent();
             intent.putExtra("Saleable", saleable);
@@ -67,12 +86,19 @@ public class getSaleable extends AppCompatActivity {
             setResult(RESULT_OK, intent);
             finish();
 
+            */
+
         }
         catch(IOException e){
             //IO EXCEPTION THROWN WHEN WEBPAGE DOES NOT EXIST
             saleable = false;
+
+            /*
+
             Intent intent = new Intent();
             intent.putExtra("Saleable", saleable);
+
+             */
         }
 
     }
