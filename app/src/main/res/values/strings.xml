@@ -4,4 +4,7 @@
     <string name="welcome_to_saleable">Welcome to Saleable!</string>
     <string name="activate_camera">Activate Camera</string>
     <string name="create_qr">Create QR</string>
+    <string name="enter_stock_number_below_and_press_generate_qr">Enter stock number below and press generate QR</string>
+    <string name="button">Button</string>
+    <string name="generate_qr">generate qr</string>
 </resources>
