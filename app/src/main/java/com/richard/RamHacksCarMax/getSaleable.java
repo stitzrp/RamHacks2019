@@ -30,7 +30,7 @@ public class getSaleable extends AppCompatActivity {
         //end JAvier
 
 
-        get_site_info(stock_num);
+        getCarInfo(stock_num);
 
     }
 
