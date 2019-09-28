@@ -19,6 +19,19 @@ public class getSaleable extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_saleable);
 
+
+        //Javier Moreira
+        //
+        String stock_num=""; //Unique Stock number of car
+        // unpack stocknumber  from main activity:
+        Bundle foodBundle = getIntent().getBundleExtra("bundle");
+        stock_num =  foodBundle.getString("num");
+        //
+        //end JAvier
+
+
+        get_site_info(stock_num);
+
     }
 
     protected void getCarInfo(String stock_num){
