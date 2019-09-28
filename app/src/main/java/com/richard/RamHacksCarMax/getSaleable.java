@@ -1,6 +1,7 @@
 package com.richard.RamHacksCarMax;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -18,17 +19,20 @@ public class getSaleable extends AppCompatActivity {
     private boolean saleable = false;
     private String price = "N/A";
     private String mileage = "N/A";
+    private static final String TAG = "get_saleable"; //just a log to debug stuff
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_saleable);
 
+
         //Javier Moreira
         String stock_num=""; //Unique Stock number of car
         // unpack stocknumber  from main activity:
         Bundle stockBundle = getIntent().getBundleExtra("bundle");
         stock_num =  stockBundle.getString("num");
+        Log.d(TAG, "num value passed in ----->" + stock_num);
         //end JAvier
 
         getCarInfo(stock_num);
