@@ -55,6 +55,7 @@ public class getSaleable extends AppCompatActivity {
         url += stock_num;
         try{
             //get car web page from carmax website
+            //TODO THIS SHIT DOES NOT WORK
             Document car_page = Jsoup.connect(url).get();
 
             //find elements of class price-mileage--value (should be price and mileage from header)
