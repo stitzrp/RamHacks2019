@@ -3,6 +3,8 @@ package com.richard.RamHacksCarMax;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.view.View;
 
@@ -51,22 +53,15 @@ public class MainActivity extends AppCompatActivity {
 //end Javier
 
 
+//Nick
 
-    public void openCam(View view){
-        checkCameraHardware(getApplicationContext());
-            
-        }
+   public void openCamera(View view){
+        Intent intent= new Intent(MainActivity.this, CameraActivity.class);
+        startActivity(intent);
+   }
 
-    private boolean checkCameraHardware(Context context) {
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
-            // this device has a camera
-            return true;
-        } else {
-            // no camera on this device
-            return false;
-        }
-    }
 
+//end Nick
 }
 
 
