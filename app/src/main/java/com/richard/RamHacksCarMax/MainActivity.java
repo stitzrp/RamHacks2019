@@ -7,6 +7,12 @@ import android.os.Bundle;
 import android.view.View;
 
 import java.util.ArrayList;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.hardware.*;
+import android.os.Bundle;
+import android.view.View;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,4 +49,24 @@ public class MainActivity extends AppCompatActivity {
         startActivity(saleCheck);
     }
 //end Javier
+
+
+
+    public void openCam(View view){
+        checkCameraHardware(getApplicationContext());
+            
+        }
+
+    private boolean checkCameraHardware(Context context) {
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
+            // this device has a camera
+            return true;
+        } else {
+            // no camera on this device
+            return false;
+        }
+    }
+
 }
+
+
