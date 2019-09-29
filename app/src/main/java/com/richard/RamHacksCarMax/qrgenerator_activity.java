@@ -17,19 +17,26 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 public class qrgenerator_activity extends AppCompatActivity {
 
-    private Button generate_qr_button;
-    private EditText qr_input_field;
-    private ImageView qr;
-    private Bitmap bitmap;
+//    private Button generate_qr_button;
+//    private EditText qr_input_field;
+//    private ImageView qr;
+//    private Bitmap bitmap;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrgenerator);
 
-        generate_qr_button.findViewById(R.id.button2);
-        qr_input_field.findViewById(R.id.editText);
-        qr.findViewById(R.id.qrCode);
+        final  Button generate_qr_button = findViewById(R.id.button2);
+        final EditText qr_input_field= findViewById(R.id.editText);
+        final  ImageView qr =findViewById(R.id.qrCode);
+
+
+        Button generate_qr_button2 = generate_qr_button;
+         EditText qr_input_field2= qr_input_field;
+         ImageView qr2 =qr;
 
         generate_qr_button.setOnClickListener(new View.OnClickListener(){
            public void onClick(View view) {
@@ -51,5 +58,7 @@ public class qrgenerator_activity extends AppCompatActivity {
                }
            }
         });
+
     }
+
 }

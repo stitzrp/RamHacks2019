@@ -55,10 +55,11 @@
         android:id="@+id/createqr"
         android:layout_width="149dp"
         android:layout_height="0dp"
-        android:layout_marginStart="56dp"
         android:layout_marginBottom="40dp"
+        android:onClick="open_qr_generator"
         android:text="Create QR"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/button"
         app:layout_constraintStart_toStartOf="@+id/button"
         app:layout_constraintTop_toBottomOf="@+id/button" />
 
