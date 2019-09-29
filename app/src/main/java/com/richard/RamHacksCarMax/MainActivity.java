@@ -12,12 +12,9 @@ import android.content.pm.PackageManager;
 import android.hardware.*;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 
 
 public class MainActivity extends AppCompatActivity {
-
-    private Button qr_page_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,14 +67,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /// start Sean
-
-    private void qrGenerationActivity(View view) {
-        Intent qr_intent = new Intent(this, qrgenerator_activity.class);
-        startActivity(qr_intent);
-    }
-
-    /// end Sean
 }
 
 

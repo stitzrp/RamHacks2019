@@ -7,57 +7,59 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/textView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="61dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="61dp"
         android:shadowColor="#FFC107"
-        android:text="@string/welcome_to_saleable"
+        android:text="Welcome to Saleable!"
         android:textColor="#122070"
         android:textSize="36sp"
-        android:gravity="center"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView2"
-        android:layout_width="292dp"
-        android:layout_height="122dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-        android:gravity="center"
+        android:id="@+id/textView"
+        android:layout_width="258dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="214dp"
         android:shadowColor="#FFC107"
-        android:text="@string/to_begin_please_press_the_activate_camera_button_then_scan_the_qr_sticker_on_the_cars_in_the_lot"
+        android:text='To begin please press the "Activate Camera" button then scan the QR sticker on the cars in the lot'
         android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="292dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="39dp"
+        android:onClick="openCam"
+        android:shadowColor="#FFC107"
+        android:text="Activate Camera"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/createqr"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="239dp"
-        android:layout_height="79dp"
-        android:layout_marginBottom="20dp"
-        android:onClick="openCam"
-        android:shadowColor="#FFC107"
-        android:text="@string/activate_camera"
-        android:textColor="#000000"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/createqr"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
         android:id="@+id/createqr"
-        android:layout_width="152dp"
-        android:layout_height="111dp"
-
-        android:gravity="center"
-        android:text="@string/create_qr"
+        android:layout_width="149dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginBottom="40dp"
+        android:text="Create QR"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/button"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
