@@ -1,9 +1,13 @@
 package com.richard.RamHacksCarMax;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -80,13 +84,15 @@ public class getSaleable extends AppCompatActivity {
                             } else if (value.endsWith("K")) {
                                 mileage = value;
                                 Log.d(TAG, "value found " + value);
-                                saleable = true;
+
                             }
                             Log.d(TAG, "connected to url succesfully");
                         }
 
                         //if everything finishes, the web page exists, and car is saleable
+                        if(!price.equals("N/A")&&!mileage.equals("N/A"))
                         saleable = true;
+
                         Log.d(TAG, "SALABLE IS TRUE");
 
             /*
@@ -101,8 +107,9 @@ public class getSaleable extends AppCompatActivity {
             finish();
 
             */
+                    }
 
-                    } catch (IOException e) {
+                    catch (IOException e) {
                         //IO EXCEPTION THROWN WHEN WEBPAGE DOES NOT EXIST
                         saleable = false;
 
@@ -128,10 +135,12 @@ public class getSaleable extends AppCompatActivity {
                 TextView saleable_text = findViewById(R.id.saleableTextView);
                 TextView price_text = findViewById(R.id.priceTextView);
                 TextView mileage_text = findViewById(R.id.mileageTextView);
+                ImageView coloredBar = findViewById(R.id.coloredBar);
 
                 if(!saleable){
                     price_text.setVisibility(View.INVISIBLE);
                     mileage_text.setVisibility(View.INVISIBLE);
+                    coloredBar.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
                     saleable_text.setText("Not Saleable");
                     Log.d(TAG, "salbale is NOT true (if was run)");
                 }
