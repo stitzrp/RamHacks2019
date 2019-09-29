@@ -174,7 +174,7 @@ public class CameraActivity extends AppCompatActivity {
                     //that means the encoded format not matches
                     //in this case you can display whatever data is available on the qrcode
                     //to a toast
-                    Toast.makeText(this, result.getContents()+"___________", Toast.LENGTH_LONG).show();
+                   // Toast.makeText(this, result.getContents()+"___________", Toast.LENGTH_LONG).show();
                     stockNum=result.getContents();
                     checkSalable(stockNum);
 

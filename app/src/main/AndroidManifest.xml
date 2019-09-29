@@ -21,7 +21,8 @@
         <activity
             android:name=".getSaleable"
             android:label="@string/title_activity_get_saleable"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".qrgenerator_activity"
             android:label="@string/title_activity_get_saleable"

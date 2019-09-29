@@ -9,31 +9,31 @@
 
     <ImageView
         android:id="@+id/coloredBar"
-        android:layout_width="463dp"
+        android:layout_width="match_parent"
         android:layout_height="48dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.927"
+        app:layout_constraintHorizontal_bias="0.891"
         app:layout_constraintStart_toEndOf="@+id/saleableTextView"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:color/holo_green_light" />
 
     <TextView
         android:id="@+id/priceTextView"
-        android:layout_width="365dp"
-        android:layout_height="142dp"
-        android:layout_marginTop="10dp"
+        android:layout_width="336dp"
+        android:layout_height="114dp"
+        android:layout_marginTop="32dp"
         android:textSize="45dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.978"
+        android:gravity="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/saleableTextView" />
 
     <TextView
         android:id="@+id/mileageTextView"
-        android:layout_width="350dp"
-        android:layout_height="136dp"
-        android:layout_marginTop="10dp"
-        android:text="tester"
+        android:layout_width="325dp"
+        android:layout_height="135dp"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
         android:textSize="45dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,12 +41,12 @@
 
     <TextView
         android:id="@+id/saleableTextView"
-        android:layout_width="367dp"
-        android:layout_height="135dp"
-        android:layout_marginTop="10dp"
+        android:layout_width="342dp"
+        android:gravity="center"
+        android:layout_height="118dp"
+        android:layout_marginTop="32dp"
         android:textSize="45dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/coloredBar" />
 </androidx.constraintlayout.widget.ConstraintLayout>
