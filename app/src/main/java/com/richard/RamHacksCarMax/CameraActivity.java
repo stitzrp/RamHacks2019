@@ -121,8 +121,11 @@ public class CameraActivity extends AppCompatActivity {
             height = jpegSizes[0].getHeight();
 
         }
-        final ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG,1);
-        List<Surface> outputSurfaces = new ArrayList<>(2);
+
+       // ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG,1);
+          ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.RAW_SENSOR, 1);
+
+        final List<Surface> outputSurfaces = new ArrayList<>(2);
         outputSurfaces.add(reader.getSurface());
 
         outputSurfaces.add(new Surface(textureView.getSurfaceTexture()));
@@ -138,12 +141,14 @@ public class CameraActivity extends AppCompatActivity {
         String ts = taLong.toString();
 
         file = new File(Environment.getExternalStorageDirectory() + "/" + ts +".jpg");
-
+        Log.d(TAG, "takePicture: file location " + Environment.getExternalStorageDirectory().getPath());
+        final ImageReader reader2 = reader;
         ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
             @Override
             public void onImageAvailable(ImageReader imageReader) {
                 Image image =null;
-                image= reader.acquireLatestImage();
+
+                image= reader2.acquireLatestImage();
                 ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                 byte[] bytes= new byte[buffer.capacity()];
                 buffer.get(bytes);
@@ -165,7 +170,7 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onCaptureCompleted(CameraCaptureSession session,CaptureRequest request,TotalCaptureResult result) {
                 super.onCaptureCompleted(session, request, result);
-                Toast.makeText(getApplicationContext(),"saved", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"Saved", Toast.LENGTH_LONG).show();
 
                 try {
                     createCameraPreview();
@@ -187,7 +192,7 @@ public class CameraActivity extends AppCompatActivity {
 
             @Override
             public void onConfigureFailed(CameraCaptureSession session) {
-
+                Log.d(TAG, "onConfigureFailed: METHOD CALLED");
             }
         }, mBackgroundHandler);
     }
@@ -294,7 +299,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
 
-    private void startCameraPreview() throws CameraAccessException {
+    /*private void startCameraPreview() throws CameraAccessException {
         SurfaceTexture texture = textureView.getSurfaceTexture();
         texture.setDefaultBufferSize(imageDimensions.getWidth(), imageDimensions.getHeight());
 
@@ -325,7 +330,7 @@ public class CameraActivity extends AppCompatActivity {
             }
         },null );
     }
-
+*/
     private void updatePreview() throws CameraAccessException {
         if(cameraDevice==null)
         {
