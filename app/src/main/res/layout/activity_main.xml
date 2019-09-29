@@ -8,17 +8,17 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="331dp"
+        android:layout_height="101dp"
         android:layout_marginStart="61dp"
         android:layout_marginTop="50dp"
         android:layout_marginEnd="61dp"
+        android:gravity="center"
         android:shadowColor="#FFC107"
         android:text="Welcome to Saleable!"
         android:textColor="#122070"
         android:textSize="36sp"
         android:textStyle="bold"
-        android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,15 +26,13 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="258dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginBottom="114dp"
+        android:layout_width="322dp"
+        android:layout_height="93dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
         android:shadowColor="#FFC107"
         android:text='To begin please press the "Activate Camera" button then scan the QR sticker on the cars in the lot'
         android:textSize="18sp"
-        android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,6 +50,7 @@
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/createqr"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
