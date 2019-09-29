@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Surface;
@@ -54,6 +55,7 @@ public class CameraActivity extends AppCompatActivity {
     private Size imageDimensions;
     private ImageReader imageReader;
     private File file;
+    final String TAG = "";
     Handler mBackgroundHandler;
     HandlerThread mBackroundThread;
 
@@ -77,11 +79,14 @@ public class CameraActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: aisdjfisadjis");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+
+
         textureView = (TextureView) findViewById(R.id.texture);
         textureView.setSurfaceTextureListener(surfaceTextureListener);
-        button= findViewById(R.id.button);
+        button= findViewById(R.id.button_capture);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,7 +98,9 @@ public class CameraActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
+
 
     private void takePicture() throws CameraAccessException {
         if(cameraDevice==null){

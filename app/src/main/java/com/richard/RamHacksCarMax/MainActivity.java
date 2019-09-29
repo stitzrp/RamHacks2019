@@ -54,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void openCam(View view){
         checkCameraHardware(getApplicationContext());
-            
+            Intent intent = new Intent(MainActivity.this,CameraActivity.class);
+            startActivity(intent);
         }
 
     private boolean checkCameraHardware(Context context) {
