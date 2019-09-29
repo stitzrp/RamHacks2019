@@ -1,8 +1,13 @@
 package com.richard.RamHacksCarMax;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +18,8 @@ import org.jsoup.select.Elements;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+
+import static android.content.ContentValues.TAG;
 
 public class getSaleable extends AppCompatActivity {
     private String url = "https://www.carmax.com/cars/";
@@ -27,6 +34,14 @@ public class getSaleable extends AppCompatActivity {
         setContentView(R.layout.activity_get_saleable);
 
 
+
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+        StrictMode.setThreadPolicy(policy);
+
+
+
         //Javier Moreira
         String stock_num=""; //Unique Stock number of car
         // unpack stocknumber  from main activity:
@@ -35,50 +50,50 @@ public class getSaleable extends AppCompatActivity {
         Log.d(TAG, "num value passed in ----->" + stock_num);
         //end JAvier
 
-        getCarInfo(stock_num);
+        final String stockNum2 = stock_num; //need a final for inner class
 
-        TextView saleable_text = findViewById(R.id.saleableTextView);
-        TextView price_text = findViewById(R.id.priceTextView);
-        TextView mileage_text = findViewById(R.id.mileageTextView);
 
-        if(!saleable){
-            price_text.setVisibility(View.INVISIBLE);
-            mileage_text.setVisibility(View.INVISIBLE);
-            saleable_text.setText("Not Saleable");
-        }
-        else{
-            saleable_text.setText("Saleable!");
-            price_text.setText(price);
-            mileage_text.setText(mileage);
-        }
+   //     getCarInfo(stock_num);
 
-    }
+        //**************************8
+        Thread thread = new Thread(new Runnable() {
 
-    protected void getCarInfo(String stock_num){
-        //append stock number to carmax website
-        url += stock_num;
-        try{
-            //get car web page from carmax website
-            //TODO THIS SHIT DOES NOT WORK
-            Document car_page = Jsoup.connect(url).get();
+            @Override
+            public void run() {
+                try {
 
-            //find elements of class price-mileage--value (should be price and mileage from header)
-            Elements price_mileage_values = car_page.select("div.price-mileage--value");
 
-            //find element that has $ for price
-            for(Element element: price_mileage_values){
-                String value = element.wholeText();
-                //if value has $, is price were looking for
-                if(value.contains("$")){
-                    price = value;
-                }
-                else if(value.endsWith("K")){
-                    mileage = value;
-                }
-            }
+                    //append stock number to carmax website
+                    url += stockNum2;
+                    try {
+                        //get car web page from carmax website
+                        //TODO THIS SHIT DOES NOT WORK
+                        Document car_page = Jsoup.connect(url.trim()).userAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:59.0) Gecko/20100101").get();
+                        Log.d(TAG, "we connected with jsoup");
 
-            //if everything finishes, the web page exists, and car is saleable
-            saleable = true;
+                        //find elements of class price-mileage--value (should be price and mileage from header)
+                        Elements price_mileage_values = car_page.select("div.price-mileage--value");
+
+                        //find element that has $ for price
+                        for (Element element : price_mileage_values) {
+                            String value = element.wholeText();
+                            //if value has $, is price were looking for
+                            if (value.contains("$")) {
+                                price = value;
+                                Log.d(TAG, "price found" + price);
+                            } else if (value.endsWith("K")) {
+                                mileage = value;
+                                Log.d(TAG, "value found " + value);
+
+                            }
+                            Log.d(TAG, "connected to url succesfully");
+                        }
+
+                        //if everything finishes, the web page exists, and car is saleable
+                        if(!price.equals("N/A")&&!mileage.equals("N/A"))
+                        saleable = true;
+
+                        Log.d(TAG, "SALABLE IS TRUE");
 
             /*
              Commented out, not returning for intent
@@ -92,21 +107,88 @@ public class getSaleable extends AppCompatActivity {
             finish();
 
             */
+                    }
 
-        }
-        catch(IOException e){
-            //IO EXCEPTION THROWN WHEN WEBPAGE DOES NOT EXIST
-            saleable = false;
+                    catch (IOException e) {
+                        //IO EXCEPTION THROWN WHEN WEBPAGE DOES NOT EXIST
+                        saleable = false;
 
+
+                        Log.d(TAG, "catch exception made 404");
             /*
 
             Intent intent = new Intent();
             intent.putExtra("Saleable", saleable);
 
              */
-        }
+                    }
 
-    }
+                }
+
+
+                //Your code goes here
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+                TextView saleable_text = findViewById(R.id.saleableTextView);
+                TextView price_text = findViewById(R.id.priceTextView);
+                TextView mileage_text = findViewById(R.id.mileageTextView);
+                ImageView coloredBar = findViewById(R.id.coloredBar);
+
+                if(!saleable){
+                    price_text.setVisibility(View.INVISIBLE);
+                    mileage_text.setVisibility(View.INVISIBLE);
+                    coloredBar.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+                    saleable_text.setText("Not Saleable");
+                    Log.d(TAG, "salbale is NOT true (if was run)");
+                }
+                else{
+                    saleable_text.setText("Saleable!");
+                    price_text.setText(price);
+                    mileage_text.setText(mileage);
+                    Log.d(TAG, "saleable is true(else is ran)");
+                }
+
+            }
+        });
+
+        thread.start();
+//**************************************************************8888
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
 
 
 }
