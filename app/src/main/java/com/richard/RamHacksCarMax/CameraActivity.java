@@ -2,10 +2,12 @@ package com.richard.RamHacksCarMax;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -14,35 +16,181 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.Image;
+import android.media.ImageReader;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Size;
+import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class CameraActivity extends AppCompatActivity {
     TextureView textureView;
+    Button button;
+    private static final SparseIntArray ORIENTATION = new SparseIntArray();
     CameraDevice cameraDevice;
     String cameraID;
-    Size imageDimensions;
+    CaptureRequest captureRequest;
     CaptureRequest.Builder captureRequestBuilder;
-    CameraCaptureSession cameraSession;
-    Handler backgroundHandler;
-    HandlerThread handlerThread;
+    CameraCaptureSession cameraCaptureSession;
+    private Size imageDimensions;
+    private ImageReader imageReader;
+    private File file;
+    Handler mBackgroundHandler;
+    HandlerThread mBackroundThread;
+
+
+    static {
+        ORIENTATION.append(Surface.ROTATION_0,90);
+        ORIENTATION.append(Surface.ROTATION_90,0);
+        ORIENTATION.append(Surface.ROTATION_180,270);
+        ORIENTATION.append(Surface.ROTATION_270,180);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,String[] permissions, int[] grantResults) {
+      if(requestCode==101)
+      {
+          if(grantResults[0]== PackageManager.PERMISSION_DENIED){
+              Toast.makeText(this, "Camera Permission must be turned on", Toast.LENGTH_SHORT).show();
+          }
+      }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         textureView = (TextureView) findViewById(R.id.texture);
-
         textureView.setSurfaceTextureListener(surfaceTextureListener);
+        button= findViewById(R.id.button);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    takePicture();
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
+    private void takePicture() throws CameraAccessException {
+        if(cameraDevice==null){
+            return;
+        }
+
+        CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraDevice.getId());
+        Size[] jpegSizes = null;
+        jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
+
+        int width = 640;
+        int height = 480;
+
+        if(jpegSizes!= null && jpegSizes.length>0)
+        {
+            width = jpegSizes[0].getWidth();
+            height = jpegSizes[0].getHeight();
+
+        }
+        final ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG,1);
+        List<Surface> outputSurfaces = new ArrayList<>(2);
+        outputSurfaces.add(reader.getSurface());
+
+        outputSurfaces.add(new Surface(textureView.getSurfaceTexture()));
+
+        final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+        captureBuilder.addTarget(reader.getSurface());
+        captureBuilder.set(CaptureRequest.CONTROL_MODE,CameraMetadata.CONTROL_MODE_AUTO);
+
+        int rotation = getWindowManager().getDefaultDisplay().getRotation();
+        captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATION.get(rotation));
+
+        Long taLong = System.currentTimeMillis()/1000;
+        String ts = taLong.toString();
+
+        file = new File(Environment.getExternalStorageDirectory() + "/" + ts +".jpg");
+
+        ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
+            @Override
+            public void onImageAvailable(ImageReader imageReader) {
+                Image image =null;
+                image= reader.acquireLatestImage();
+                ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+                byte[] bytes= new byte[buffer.capacity()];
+                buffer.get(bytes);
+                try {
+                    save(bytes);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                finally
+                {
+                    if(image != null){
+                        image.close();
+                    }
+                }
+            }
+        };
+        reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
+        final CameraCaptureSession.CaptureCallback captureListener =  new CameraCaptureSession.CaptureCallback() {
+            @Override
+            public void onCaptureCompleted(CameraCaptureSession session,CaptureRequest request,TotalCaptureResult result) {
+                super.onCaptureCompleted(session, request, result);
+                Toast.makeText(getApplicationContext(),"saved", Toast.LENGTH_LONG).show();
+
+                try {
+                    createCameraPreview();
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
+
+            @Override
+            public void onConfigured(CameraCaptureSession session) {
+                try {
+                    session.capture(captureBuilder.build(), captureListener, mBackgroundHandler);
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onConfigureFailed(CameraCaptureSession session) {
+
+            }
+        }, mBackgroundHandler);
+    }
+
+    private void save(byte[] bytes) throws IOException {
+        OutputStream outputStream = null;
+        outputStream = new FileOutputStream(file);
+        outputStream.write(bytes);
+        outputStream.close();
+    }
 
     TextureView.SurfaceTextureListener surfaceTextureListener = new TextureView.SurfaceTextureListener() {
 
@@ -71,50 +219,74 @@ public class CameraActivity extends AppCompatActivity {
         }
     };
 
-    private void openCamera() throws CameraAccessException {
-        CameraManager cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        cameraID = cameraManager.getCameraIdList()[0];
-
-        CameraCharacteristics cc = cameraManager.getCameraCharacteristics(cameraID);
-        StreamConfigurationMap map = cc.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-        imageDimensions = map.getOutputSizes(SurfaceTexture.class)[0];
-
-        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    Activity#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for Activity#requestPermissions for more details.
-            return;
-        }
-        cameraManager.openCamera(cameraID, stateCallback, null);
-    }
-
-    CameraDevice.StateCallback stateCallback= new CameraDevice.StateCallback(){
-
+    private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
-        public void onOpened(@NonNull CameraDevice cameraDevice) {
-            cameraDevice = cameraDevice;
+        public void onOpened(CameraDevice camera) {
+            cameraDevice=camera;
             try {
-                startCameraPreview();
+                createCameraPreview();
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
         }
 
         @Override
-        public void onDisconnected(@NonNull CameraDevice cameraDevice) {
+        public void onDisconnected(CameraDevice camera) {
             cameraDevice.close();
         }
 
         @Override
-        public void onError(@NonNull CameraDevice cameraDevice, int i) {
+        public void onError(CameraDevice camera, int i) {
             cameraDevice.close();
             cameraDevice=null;
         }
     };
+
+    private void createCameraPreview() throws CameraAccessException {
+        SurfaceTexture texture = textureView.getSurfaceTexture();
+        texture.setDefaultBufferSize(imageDimensions.getWidth(), imageDimensions.getHeight());
+        Surface surface = new Surface(texture);
+        captureRequestBuilder= cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+        captureRequestBuilder.addTarget(surface);
+        cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
+            @Override
+            public void onConfigured(CameraCaptureSession session) {
+                if(cameraDevice==null)
+                {
+                    return;
+                }
+                cameraCaptureSession =session;
+                try {
+                    updatePreview();
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onConfigureFailed(CameraCaptureSession session) {
+                Toast.makeText(getApplicationContext(),"config changed", Toast.LENGTH_LONG);
+            }
+        }, null);
+    }
+    private void openCamera() throws CameraAccessException {
+        CameraManager cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        cameraID = cameraManager.getCameraIdList()[0];
+
+        CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraID);
+        StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+        imageDimensions = map.getOutputSizes(SurfaceTexture.class)[0];
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) !=  PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ){
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
+
+            return;
+        }
+        cameraManager.openCamera(cameraID, stateCallback, null);
+    }
+
+
     private void startCameraPreview() throws CameraAccessException {
         SurfaceTexture texture = textureView.getSurfaceTexture();
         texture.setDefaultBufferSize(imageDimensions.getWidth(), imageDimensions.getHeight());
@@ -131,7 +303,7 @@ public class CameraActivity extends AppCompatActivity {
                     return;
                 }
 
-                cameraSession=cameraCaptureSession;
+                CameraActivity.this.cameraCaptureSession =cameraCaptureSession;
 
                 try {
                     updatePreview();
@@ -153,13 +325,13 @@ public class CameraActivity extends AppCompatActivity {
             return;
         }
         captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-        cameraSession.setRepeatingRequest(captureRequestBuilder.build(),null,backgroundHandler);
+        cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(),null, mBackgroundHandler);
     }
 
+    @Override
     protected void onResume(){
         super.onResume();
         startBackroundThread();
-
         if(textureView.isAvailable()){
             try {
                 openCamera();
@@ -175,11 +347,12 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void startBackroundThread() {
-        handlerThread= new HandlerThread("Camera Background");
-        handlerThread.start();
-        backgroundHandler= new Handler(handlerThread.getLooper());
+        mBackroundThread = new HandlerThread("Camera Background");
+        mBackroundThread.start();
+        mBackgroundHandler = new Handler(mBackroundThread.getLooper());
     }
 
+    @Override
     protected void onPause(){
         try {
             stopBackroundThread();
@@ -190,12 +363,11 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void stopBackroundThread() throws InterruptedException {
-    handlerThread.quitSafely();
-    handlerThread.join();
+    mBackroundThread.quitSafely();
+    mBackroundThread.join();
 
-    backgroundHandler=null;
-    handlerThread=null;
-
+    mBackgroundHandler =null;
+    mBackroundThread =null;
     }
-
 }
+
