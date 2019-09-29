@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.*;
-
+import android.os.Bundle;
+import android.view.View;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -19,10 +20,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String stockNum="17922851"; //the stock number
+        String stockNum=""; //the stock number
 
         //TODO uncomment the line below once the stocknumber is found from the QR code
-        checkSalable(stockNum);
+        //checkSalable(stockNum);
     }
 
 
@@ -50,15 +51,22 @@ public class MainActivity extends AppCompatActivity {
 //end Javier
 
 
-//Nick
 
-   public void openCamera(View view){
-        Intent intent= new Intent(MainActivity.this, CameraActivity.class);
-        startActivity(intent);
-   }
+    public void openCam(View view){
+        checkCameraHardware(getApplicationContext());
+            
+        }
 
+    private boolean checkCameraHardware(Context context) {
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
+            // this device has a camera
+            return true;
+        } else {
+            // no camera on this device
+            return false;
+        }
+    }
 
-//end Nick
 }
 
 
