@@ -7,4 +7,5 @@
     <string name="enter_stock_number_below_and_press_generate_qr">Enter stock number below and press generate QR</string>
     <string name="button">Button</string>
     <string name="generate_qr">generate qr</string>
+    <string name="title_activity_get_saleable">title_activity_get_saleable</string>
 </resources>
